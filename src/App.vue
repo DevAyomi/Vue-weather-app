@@ -10,8 +10,15 @@
       <div class="container">
         <div class="row">
           <div class="col-md-4 mt-4 ms-auto">
-            <p v-if="danger" class="justify-content-center p-2 bg-warning card-header">City not found</p>
-             <p v-if="!danger" class="card-header">Search any city around the world</p>
+            <p
+              v-if="danger"
+              class="justify-content-center p-2 bg-warning card-header"
+            >
+              City not found
+            </p>
+            <p v-if="!danger" class="card-header">
+              Search any city around the world
+            </p>
             <div class="card-body border">
               <form v-on:submit.prevent="getWeather">
                 <div class="form-group">
@@ -22,6 +29,12 @@
                     v-model="citySearch"
                     autocomplete="off"
                   />
+                  <p
+                    v-if="danger"
+                    class="justify-content-center p-2 text-danger"
+                  >
+                    Input Field Cant be empty
+                  </p>
                   <button class="btn btn-success mt-3" type="submit">
                     Submit
                   </button>
@@ -81,6 +94,7 @@ export default {
     return {
       isDay: true,
       danger: false,
+      empty: false,
       citySearch: "",
       weather: {
         cityName: "Placeholder",
@@ -113,22 +127,27 @@ export default {
         this.weather.feelsLike = Math.round(data.main.feels_like);
         this.weather.humidity = Math.round(data.main.humidity);
         this.danger = false;
+        this.empty = false;
         const DayNight = data.weather[0].icon;
 
+        if (this.citySearch == "") {
+          this.empty = "true";
+        } else {
+          this.empty = "false";
+        }
         if (DayNight.includes("n")) {
           this.isDay = false;
         } else {
           this.isDay = true;
         }
-      }else{
+      } else {
         //Check the time of the day
-         if(response.statusText == "Not Found"){
-          this.danger = "true"
-         }else{
-           this.danger = "false"
-         }
+        if (response.statusText == "Not Found") {
+          this.danger = "true";
+        } else {
+          this.danger = "false";
+        }
       }
-      
     },
   },
 };
