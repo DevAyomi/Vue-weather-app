@@ -10,7 +10,8 @@
       <div class="container">
         <div class="row">
           <div class="col-md-4 mt-4 ms-auto">
-            <div class="card-header">Search Section</div>
+            <p v-if="danger" class="justify-content-center p-2 bg-warning">City not found</p>
+             <p v-else class="card-header">Search any city around the world</p>
             <div class="card-body border">
               <form v-on:submit.prevent="getWeather">
                 <div class="form-group">
@@ -79,16 +80,17 @@ export default {
   data() {
     return {
       isDay: true,
+      danger: false,
       citySearch: "",
       weather: {
-        cityName: "Abuja",
-        country: "NG",
-        temperature: 12,
-        description: "Cloud everywhere",
-        lowTemp: "19",
-        highTemp: "24",
-        feelsLike: "20",
-        humidity: "55",
+        cityName: "Placeholder",
+        country: "Ng",
+        temperature: "XX",
+        description: "Placeholder",
+        lowTemp: "XX",
+        highTemp: "XX",
+        feelsLike: "XX",
+        humidity: "XX",
       },
     };
   },
@@ -97,27 +99,33 @@ export default {
       console.log(this.citySearch);
       const key = "87aee6a845d121670d18ea1a1c036571";
       const baseURL = `http://api.openweathermap.org/data/2.5/weather?q=${this.citySearch}&appid=${key}&units=metric`;
-
       const response = await fetch(baseURL);
-      const data = await response.json();
-      console.log(data);
-      this.citySearch = "";
-      this.weather.cityName = data.name;
-      this.weather.country = data.sys.country;
-      this.weather.temperature = Math.round(data.main.temp);
-      this.weather.description = data.weather[0].description;
-      this.weather.lowTemp = Math.round(data.main.temp_min);
-      this.weather.highTemp = Math.round(data.main.temp_max);
-      this.weather.feelsLike = Math.round(data.main.feels_like);
-      this.weather.humidity = Math.round(data.main.humidity);
-      const DayNight = data.weather[0].icon;
+      if (response.status >= 200 && response.status <= 299) {
+        const data = await response.json();
+        console.log(data);
+        this.citySearch = "";
+        this.weather.cityName = data.name;
+        this.weather.country = data.sys.country;
+        this.weather.temperature = Math.round(data.main.temp);
+        this.weather.description = data.weather[0].description;
+        this.weather.lowTemp = Math.round(data.main.temp_min);
+        this.weather.highTemp = Math.round(data.main.temp_max);
+        this.weather.feelsLike = Math.round(data.main.feels_like);
+        this.weather.humidity = Math.round(data.main.humidity);
+        const DayNight = data.weather[0].icon;
 
-      //Check the time of the day
-      if (DayNight.includes("n")) {
-        this.isDay = false;
-      } else {
-        this.isDay = true;
+        if (DayNight.includes("n")) {
+          this.isDay = false;
+        } else {
+          this.isDay = true;
+        }
+      }else{
+        //Check the time of the day
+         if(response.statusText == "Not Found"){
+          this.danger = "true"
+         }
       }
+      
     },
   },
 };
