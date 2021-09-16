@@ -10,8 +10,8 @@
       <div class="container">
         <div class="row">
           <div class="col-md-4 mt-4 ms-auto">
-            <p v-if="danger" class="justify-content-center p-2 bg-warning">City not found</p>
-             <p v-else class="card-header">Search any city around the world</p>
+            <p v-if="danger" class="justify-content-center p-2 bg-warning card-header">City not found</p>
+             <p v-if="!danger" class="card-header">Search any city around the world</p>
             <div class="card-body border">
               <form v-on:submit.prevent="getWeather">
                 <div class="form-group">
@@ -112,6 +112,7 @@ export default {
         this.weather.highTemp = Math.round(data.main.temp_max);
         this.weather.feelsLike = Math.round(data.main.feels_like);
         this.weather.humidity = Math.round(data.main.humidity);
+        this.danger = false;
         const DayNight = data.weather[0].icon;
 
         if (DayNight.includes("n")) {
@@ -123,6 +124,8 @@ export default {
         //Check the time of the day
          if(response.statusText == "Not Found"){
           this.danger = "true"
+         }else{
+           this.danger = "false"
          }
       }
       
